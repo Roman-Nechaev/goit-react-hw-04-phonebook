@@ -1,44 +1,32 @@
-import React, { Component } from 'react';
+import { useState } from 'react';
 import { nanoid } from 'nanoid';
 import { Report } from 'notiflix/build/notiflix-report-aio';
+
+import contactsPhonebook from '../Data/contactsPhonebook.json';
+import { CONTACTS_KEY } from '../Data/keyLocalStorage';
 
 import ContactForm from './ContactForm/ContactForm';
 import ContactsList from './ContactsList/ContactsList';
 import Filter from './Filter/Filter';
 
+import useLocalStorage from './hooks/useLocalStorage';
+
 import { Container, Title, TitleContacts } from './App.styled';
 
-const LOCALSTORAGE_KEY = 'contacts';
+function App() {
+  const [contacts, setСontacts] = useLocalStorage(
+    CONTACTS_KEY,
+    contactsPhonebook
+  );
 
-class App extends Component {
-  state = {
-    contacts: [
-      { id: 'id-1', name: 'Rosie Simpson', number: '459-12-56' },
-      { id: 'id-2', name: 'Hermione Kline', number: '443-89-12' },
-      { id: 'id-3', name: 'Eden Clements', number: '645-17-79' },
-      { id: 'id-4', name: 'Annie Copeland', number: '227-91-26' },
-    ],
-    filter: '',
+  const [filter, setFilter] = useState('');
+
+  const nameCheck = name => {
+    return contacts.filter(contact => contact.name.includes(name));
   };
 
-  componentDidUpdate(prevProps, prevState) {
-    const { contacts } = this.state;
-    if (contacts !== prevState.contacts) {
-      localStorage.setItem(LOCALSTORAGE_KEY, JSON.stringify(contacts));
-    }
-  }
-
-  componentDidMount() {
-    const contact = JSON.parse(localStorage.getItem(LOCALSTORAGE_KEY));
-
-    if (contact) {
-      this.setState({ contacts: contact });
-    }
-  }
-
-  addContact = ({ name, number }) => {
-    const check = this.nameCheck(name);
-
+  const addContact = ({ name, number }) => {
+    const check = nameCheck(name);
     if (check.length <= 0) {
       const subscriber = {
         id: nanoid(),
@@ -46,61 +34,48 @@ class App extends Component {
         number,
       };
 
-      this.setState(prevState => ({
-        contacts: [subscriber, ...prevState.contacts],
-      }));
+      setСontacts([subscriber, ...contacts]);
+
       return;
     }
     // alert(`${name} is already in contacts`);
     Report.failure('Warning!', `"${name}" is already in contacts`, 'Okay');
   };
 
-  nameCheck = name => {
-    const { contacts } = this.state;
-
-    return contacts.filter(contact => contact.name.includes(name));
+  const changeFilter = e => {
+    setFilter(e.currentTarget.value);
   };
 
-  changeFilter = e => {
-    this.setState({ filter: e.currentTarget.value });
-  };
-
-  getVisibleContacts = () => {
-    const { filter, contacts } = this.state;
-
+  const getVisibleContacts = (filter, contacts) => {
     const normaliseFilter = filter.toLowerCase();
+
     return contacts.filter(contact =>
       contact.name.toLowerCase().includes(normaliseFilter)
     );
   };
 
-  deleteContact = contactId => {
-    this.setState(prevState => ({
-      contacts: prevState.contacts.filter(contact => contact.id !== contactId),
-    }));
+  const deleteContact = contactId => {
+    setСontacts(contacts.filter(contact => contact.id !== contactId));
   };
 
-  render() {
-    const { filter, contacts } = this.state;
-    const visibleContacts = this.getVisibleContacts();
-    const quantity = contacts.length;
+  const visibleContacts = getVisibleContacts(filter, contacts);
+  const quantityContacts = contacts.length;
 
-    return (
-      <Container>
-        <Title>Phonebook</Title>
-        <ContactForm onSubmit={this.addContact} />
+  return (
+    <Container>
+      <Title>Phonebook</Title>
+      <ContactForm onSubmit={addContact} />
 
-        <TitleContacts>Contacts</TitleContacts>
-        <Filter value={filter} onChange={this.changeFilter} />
+      <TitleContacts>Contacts</TitleContacts>
+      <Filter value={filter} onChange={changeFilter} />
 
-        <ContactsList
-          quantity={quantity}
-          contacts={visibleContacts}
-          onDeleteContact={this.deleteContact}
-        />
-      </Container>
-    );
-  }
+      <ContactsList
+        quantity={quantityContacts}
+        contacts={visibleContacts}
+        onDeleteContact={deleteContact}
+      />
+    </Container>
+  );
 }
 
 export default App;

@@ -1,6 +1,5 @@
-import PropTypes from 'prop-types';
 import { NoContacts } from './NoContacts';
-
+import PropTypes from 'prop-types';
 import {
   Container,
   Info,
