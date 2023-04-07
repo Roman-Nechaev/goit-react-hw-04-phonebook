@@ -2,7 +2,7 @@ import { useState } from 'react';
 import { nanoid } from 'nanoid';
 import { Report } from 'notiflix/build/notiflix-report-aio';
 
-import contactsPhonebook from '../Data/contactsPhonebook.json';
+import contactsPhoneBook from '../Data/contactsPhoneBook.json';
 import { CONTACTS_KEY } from '../Data/keyLocalStorage';
 
 import ContactForm from './ContactForm/ContactForm';
@@ -14,9 +14,9 @@ import useLocalStorage from './hooks/useLocalStorage';
 import { Container, Title, TitleContacts } from './App.styled';
 
 function App() {
-  const [contacts, setСontacts] = useLocalStorage(
+  const [contacts, setContacts] = useLocalStorage(
     CONTACTS_KEY,
-    contactsPhonebook
+    contactsPhoneBook
   );
 
   const [filter, setFilter] = useState('');
@@ -34,7 +34,7 @@ function App() {
         number,
       };
 
-      setСontacts([subscriber, ...contacts]);
+      setContacts([subscriber, ...contacts]);
 
       return;
     }
@@ -47,15 +47,15 @@ function App() {
   };
 
   const getVisibleContacts = (filter, contacts) => {
-    const normaliseFilter = filter.toLowerCase();
+    const normalizeFilter = filter.toLowerCase();
 
     return contacts.filter(contact =>
-      contact.name.toLowerCase().includes(normaliseFilter)
+      contact.name.toLowerCase().includes(normalizeFilter)
     );
   };
 
   const deleteContact = contactId => {
-    setСontacts(contacts.filter(contact => contact.id !== contactId));
+    setContacts(contacts.filter(contact => contact.id !== contactId));
   };
 
   const visibleContacts = getVisibleContacts(filter, contacts);
@@ -63,7 +63,7 @@ function App() {
 
   return (
     <Container>
-      <Title>Phonebook</Title>
+      <Title>PhoneBook</Title>
       <ContactForm onSubmit={addContact} />
 
       <TitleContacts>Contacts</TitleContacts>
