@@ -2,21 +2,20 @@ import { useState } from 'react';
 import { nanoid } from 'nanoid';
 import { Report } from 'notiflix/build/notiflix-report-aio';
 
-import contactsPhoneBook from '../Data/contactsPhoneBook.json';
 import { CONTACTS_KEY } from '../Data/keyLocalStorage';
-
 import ContactForm from './ContactForm/ContactForm';
 import ContactsList from './ContactsList/ContactsList';
 import Filter from './Filter/Filter';
 
 import useLocalStorage from './hooks/useLocalStorage';
+import contactsPhonebook from '../Data/contactsPhonebook.json';
 
 import { Container, Title, TitleContacts } from './App.styled';
 
 function App() {
   const [contacts, setContacts] = useLocalStorage(
     CONTACTS_KEY,
-    contactsPhoneBook
+    contactsPhonebook
   );
 
   const [filter, setFilter] = useState('');
