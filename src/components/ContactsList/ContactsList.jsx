@@ -9,7 +9,7 @@ import {
   PersonOutline,
   CallOutline,
   IoTrashOut,
-} from './ContactsList.stylid';
+} from './ContactsList.styled';
 
 const ContactsList = ({ quantity, contacts, onDeleteContact }) => (
   <>
